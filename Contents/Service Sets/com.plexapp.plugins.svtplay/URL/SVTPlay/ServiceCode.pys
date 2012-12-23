@@ -55,12 +55,10 @@ def MediaObjectsForURL(url):
 
 	return [
 		MediaObject(
-			parts = [
-				PartObject(key=HTTPLiveStreamURL(Callback(PlayVideo, url=url)))
-			],
-			container = 'mpegts',
+			parts = [ PartObject(key=Callback(PlayVideo, url=url)) ],
+			container = Container.MP4,
 			video_codec = VideoCodec.H264,
-			video_resolution = '480',
+			video_resolution = '1024',
 			audio_codec = AudioCodec.AAC,
 			audio_channels = 2,
 			optimized_for_streaming = True
@@ -68,6 +66,7 @@ def MediaObjectsForURL(url):
 	]
 
 ####################################################################################################
+@indirect
 def PlayVideo(url, bitrate=None):
 
 	try:
@@ -91,4 +90,4 @@ def PlayVideo(url, bitrate=None):
 	if not video_url:
 		raise Ex.MediaNotAvailable
 
-	return Redirect(video_url)
+	return IndirectResponse(VideoClipObject, key=HTTPLiveStreamURL(url=video_url))
